@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Stock Forecast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="overlay">
+        <div class="container">
+            <!-- Header -->
+            <header>
+                <h1>Quantum Stock Forecast Dashboard</h1>
+                <p class="subtitle">Track market direction, risk, profit & forecast charts</p>
+            </header>
+
+            <!-- Stock Input Form -->
+            <form method="POST" class="stock-form">
+                <input type="text" name="stock" list="stocks" placeholder="Enter Stock Symbol" required>
+                <datalist id="stocks">
+                    {% for s in stocks %}
+                    <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </datalist>
+                <input type="number" name="hours" placeholder="Forecast Hours" required min="1" max="72">
+                <button type="submit">Predict Market</button>
+            </form>
+
+            {% if result %}
+            <!-- Results Section -->
+            <div class="results">
+
+                <!-- Stat Cards -->
+                <div class="stat-cards">
+                    <div class="card">
+                        <h3>Market Direction</h3>
+                        <p>{{ result.direction }}</p>
+                    </div>
+                    <div class="card">
+                        <h3>Expected Profit</h3>
+                        <p>{{ result.profit }}</p>
+                    </div>
+                    <div class="card">
+                        <h3>Risk / Loss</h3>
+                        <p>{{ result.risk }}</p>
+                    </div>
+                    <div class="card">
+                        <h3>Profit/Loss Ratio</h3>
+                        <p>{{ result.ratio }}</p>
+                    </div>
+                    <div class="card">
+                        <h3>Forecast Hours</h3>
+                        <p>{{ result.hours }}</p>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts">
+                    <div class="chart">
+                        <h3>Historical Prices</h3>
+                        <img src="{{ url_for('static', filename='charts/history.png') }}" alt="Historical Chart">
+                    </div>
+                    <div class="chart">
+                        <h3>Forecast Chart</h3>
+                        <img src="{{ url_for('static', filename='charts/forecast.png') }}" alt="Forecast Chart">
+                    </div>
+                </div>
+
+                <!-- Future Forecast Table -->
+                <div class="table-container">
+                    <h3>Future Hourly Forecast</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hour</th>
+                                <th>Predicted Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result.future_data %}
+                            <tr>
+                                <td>{{ row.Hour }}</td>
+                                <td>{{ row.Price }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
